@@ -1,23 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+
+//components
+import Canvas from "./components/Canvas";
 
 function App() {
+  const setContext = (canvas) => {
+    const ctx = canvas.current.getContext("2d");
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0, 0, ctx.canvas.width * 0.1, ctx.canvas.height * 0.1);
+    ctx.fillRect(
+      0 + ctx.canvas.width * 0.1,
+      0,
+      ctx.canvas.width * 0.1,
+      ctx.canvas.height * 0.1
+    );
+    console.log(ctx);
+    return ctx;
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Canvas setContext={setContext}></Canvas>
     </div>
   );
 }
