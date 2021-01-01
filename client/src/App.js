@@ -10,19 +10,16 @@ function App() {
 
   useEffect(() => {
     if (ctx !== null) {
-      drawShape();
+      drawShape(position.x, position.y, "black");
+      createFood();
     }
   });
 
   //functions
 
-  const drawShape = () => {
-    ctx.fillRect(
-      position.x,
-      position.y,
-      ctx.canvas.width * 0.1,
-      ctx.canvas.height * 0.1
-    );
+  const drawShape = (x, y, colour = "black") => {
+    ctx.fillStyle = colour;
+    ctx.fillRect(x, y, ctx.canvas.width * 0.1, ctx.canvas.height * 0.1);
   };
 
   const clearField = () => {
@@ -42,6 +39,13 @@ function App() {
       return { ...newPosition, y: 0 };
     }
     return newPosition;
+  };
+
+  const createFood = () => {
+    let x = Math.floor(Math.random() * 100 * 0.1) * ctx.canvas.width * 0.1;
+    let y = Math.floor(Math.random() * 100 * 0.1) * ctx.canvas.height * 0.1;
+
+    drawShape(x, y, "green");
   };
 
   const moveShape = (direction) => {
@@ -78,7 +82,7 @@ function App() {
   };
 
   return (
-    <div className="App" tabIndex={1} onKeyDown={(e) => moveShape(e.code)}>
+    <div className="App" tabIndex={0} onKeyDown={(e) => moveShape(e.code)}>
       <Canvas setContext={setContext}></Canvas>
     </div>
   );
