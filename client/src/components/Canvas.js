@@ -1,5 +1,8 @@
 import React, { useEffect, useRef } from "react";
 
+//constants
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../constants";
+
 function Canvas({ setContext }) {
   //effects
   useEffect(() => {
@@ -11,11 +14,13 @@ function Canvas({ setContext }) {
   return (
     <canvas
       ref={canvasRef}
-      style={{ border: "1px solid black", width: "50vw", height: "50vw" }}
+      style={{
+        border: "1px solid black",
+        width: CANVAS_WIDTH,
+        height: CANVAS_HEIGHT,
+      }}
       id="gameField"
-    >
-      I am canvas
-    </canvas>
+    />
   );
 }
 
