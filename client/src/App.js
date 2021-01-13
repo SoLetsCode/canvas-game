@@ -35,6 +35,15 @@ function App() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   };
 
+  const clearPosition = (x, y) => {
+    ctx.clearRect(
+      x,
+      y,
+      ctx.canvas.width * BOARD_MULTIPLIER,
+      ctx.canvas.height * BOARD_MULTIPLIER
+    );
+  };
+
   const checkBoundary = (position) => {
     //checking if out of bounds 4 cases up, down, left, right
     let newPosition = position;
@@ -64,7 +73,7 @@ function App() {
       setFoodPositions([{ x, y }]);
     }
 
-    foodPositions.map((position) => {
+    foodPositions.forEach((position) => {
       drawShape(position.x, position.y, "green");
     });
   };
@@ -74,7 +83,8 @@ function App() {
 
     switch (direction) {
       case "ArrowDown":
-        clearField();
+        //clearField();
+        clearPosition(position.x, position.y);
         newPosition = {
           ...position,
           y: position.y + ctx.canvas.height * BOARD_MULTIPLIER,
@@ -82,7 +92,8 @@ function App() {
         setPosition(checkBoundary(newPosition));
         break;
       case "ArrowUp":
-        clearField();
+        //clearField();
+        clearPosition(position.x, position.y);
         newPosition = {
           ...position,
           y: position.y - ctx.canvas.height * BOARD_MULTIPLIER,
@@ -90,7 +101,8 @@ function App() {
         setPosition(checkBoundary(newPosition));
         break;
       case "ArrowLeft":
-        clearField();
+        //clearField();
+        clearPosition(position.x, position.y);
         newPosition = {
           ...position,
           x: position.x - ctx.canvas.width * BOARD_MULTIPLIER,
@@ -98,7 +110,8 @@ function App() {
         setPosition(checkBoundary(newPosition));
         break;
       case "ArrowRight":
-        clearField();
+        //clearField();
+        clearPosition(position.x, position.y);
         newPosition = {
           ...position,
           x: position.x + ctx.canvas.width * BOARD_MULTIPLIER,
