@@ -59,6 +59,21 @@ function App() {
     return newPosition;
   };
 
+  const checkCollision = (position) => {
+    //checks to see if the snake hits a food or itself
+    let foodCheckIndex = foodPositions.findIndex(
+      (foodPosition) =>
+        foodPosition.x === position.x && foodPosition.y === position.y
+    );
+
+    if (foodCheckIndex !== -1) {
+      let tempFoodPositions = foodPositions;
+      tempFoodPositions.splice(foodCheckIndex, 1);
+
+      createFood();
+    }
+  };
+
   const createFood = () => {
     let x =
       Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
@@ -120,6 +135,8 @@ function App() {
         break;
       default:
     }
+
+    checkCollision(checkBoundary(newPosition));
   };
 
   const setContext = (canvas) => {
