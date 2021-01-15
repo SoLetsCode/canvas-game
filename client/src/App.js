@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 
 //components
 import Canvas from "./components/Canvas";
+import Score from "./components/Score";
 
 import { BOARD_MULTIPLIER } from "./constants";
 
@@ -11,6 +12,7 @@ function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [foodPositions, setFoodPositions] = useState([]);
   const [snakePositions, setSnakePositions] = useState([]);
+  let [score, setScore] = useState(0);
 
   useEffect(() => {
     if (ctx !== null) {
@@ -71,6 +73,7 @@ function App() {
       tempFoodPositions.splice(foodCheckIndex, 1);
 
       createFood();
+      setScore(score + 1);
     }
   };
 
@@ -147,6 +150,7 @@ function App() {
   return (
     <div className="App" tabIndex={0} onKeyDown={(e) => moveShape(e.code)}>
       <Canvas setContext={setContext}></Canvas>
+      <Score score={score} />
     </div>
   );
 }
