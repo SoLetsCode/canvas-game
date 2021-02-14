@@ -6,17 +6,19 @@ import Canvas from "./components/Canvas";
 import Score from "./components/Score";
 import Board from "./components/Board";
 
-import { BOARD_MULTIPLIER } from "./constants";
+import { BOARD_MULTIPLIER, BOARD_SEPARATION, COLLISION } from "./constants";
+
+const defaultSnake = [
+  { x: 0, y: 0 },
+  { x: 30, y: 0 },
+  { x: 60, y: 0 },
+];
 
 function App() {
   const [ctx, setCtx] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [foodPositions, setFoodPositions] = useState([]);
-  const [snakePositions, setSnakePositions] = useState([
-    { x: 0, y: 0 },
-    { x: 30, y: 0 },
-    { x: 60, y: 0 },
-  ]);
+  const [snakePositions, setSnakePositions] = useState(defaultSnake);
   let [score, setScore] = useState(0);
 
   useEffect(() => {
@@ -31,10 +33,10 @@ function App() {
   const drawShape = (x, y, colour = "black") => {
     ctx.fillStyle = colour;
     ctx.fillRect(
-      x,
-      y,
-      ctx.canvas.width * BOARD_MULTIPLIER,
-      ctx.canvas.height * BOARD_MULTIPLIER
+      x + BOARD_SEPARATION,
+      y + BOARD_SEPARATION,
+      ctx.canvas.width * BOARD_MULTIPLIER - BOARD_SEPARATION,
+      ctx.canvas.height * BOARD_MULTIPLIER - BOARD_SEPARATION
     );
   };
 
@@ -84,33 +86,37 @@ function App() {
         snakePosition.x === position.x && snakePosition.y === position.y
     );
 
+    if (snakeCheckIndex !== -1) {
+      return COLLISION.SNAKE;
+    }
+
     if (foodCheckIndex !== -1) {
       let tempFoodPositions = foodPositions;
       tempFoodPositions.splice(foodCheckIndex, 1);
 
       createFood();
       setScore(score + 1);
-    }
-
-    if (snakeCheckIndex !== -1) {
-      alert("YOU LOSE");
+      return COLLISION.FOOD;
+    } else {
+      return COLLISION.CLEAR;
     }
   };
 
   const createFood = () => {
     let x, y;
-    do {
-      x =
-        Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
-        ctx.canvas.width *
-        BOARD_MULTIPLIER;
-      y =
-        Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
-        ctx.canvas.height *
-        BOARD_MULTIPLIER;
-    } while (snakePositions.some((snake) => snake.x === x || snake.y === y));
 
     if (foodPositions.length < 1) {
+      do {
+        x =
+          Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
+          ctx.canvas.width *
+          BOARD_MULTIPLIER;
+        y =
+          Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
+          ctx.canvas.height *
+          BOARD_MULTIPLIER;
+        console.log(x, y);
+      } while (snakePositions.some((snake) => snake.x === x && snake.y === y));
       setFoodPositions([{ x, y }]);
     }
 
@@ -121,7 +127,7 @@ function App() {
 
   const moveSnake = (direction) => {
     let tempSnake = [...snakePositions];
-    let lastPosition = tempSnake.shift();
+    let lastPosition = tempSnake[0];
     let newPosition = snakePositions[snakePositions.length - 1];
 
     switch (direction) {
@@ -163,8 +169,24 @@ function App() {
     newPosition = checkBoundary(newPosition);
     tempSnake.push(newPosition);
     clearPosition(lastPosition.x, lastPosition.y);
-    checkCollision(checkBoundary(newPosition));
-    setSnakePositions(tempSnake);
+    let collision = checkCollision(checkBoundary(newPosition));
+    switch (collision) {
+      case COLLISION.SNAKE:
+        alert(`YOU LOSE
+        you ate ${score} pellets`);
+        setSnakePositions(defaultSnake);
+        setScore(0);
+        clearField();
+        break;
+      case COLLISION.FOOD:
+        setSnakePositions(tempSnake);
+        break;
+      case COLLISION.CLEAR:
+        setSnakePositions(tempSnake);
+        tempSnake.shift();
+        break;
+      default:
+    }
   };
 
   const setContext = (canvas) => {
