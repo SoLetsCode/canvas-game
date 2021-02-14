@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 //components
 import Canvas from "./components/Canvas";
 import Score from "./components/Score";
+import Board from "./components/Board";
 
 import { BOARD_MULTIPLIER } from "./constants";
 
@@ -11,13 +12,17 @@ function App() {
   const [ctx, setCtx] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [foodPositions, setFoodPositions] = useState([]);
-  const [snakePositions, setSnakePositions] = useState([]);
+  const [snakePositions, setSnakePositions] = useState([
+    { x: 0, y: 0 },
+    { x: 30, y: 0 },
+    { x: 60, y: 0 },
+  ]);
   let [score, setScore] = useState(0);
 
   useEffect(() => {
     if (ctx !== null) {
-      drawShape(position.x, position.y, "black");
       createFood();
+      drawSnake();
     }
   });
 
@@ -31,6 +36,12 @@ function App() {
       ctx.canvas.width * BOARD_MULTIPLIER,
       ctx.canvas.height * BOARD_MULTIPLIER
     );
+  };
+
+  const drawSnake = () => {
+    for (let each of snakePositions) {
+      drawShape(each.x, each.y, "black");
+    }
   };
 
   const clearField = () => {
@@ -68,12 +79,21 @@ function App() {
         foodPosition.x === position.x && foodPosition.y === position.y
     );
 
+    let snakeCheckIndex = snakePositions.findIndex(
+      (snakePosition) =>
+        snakePosition.x === position.x && snakePosition.y === position.y
+    );
+
     if (foodCheckIndex !== -1) {
       let tempFoodPositions = foodPositions;
       tempFoodPositions.splice(foodCheckIndex, 1);
 
       createFood();
       setScore(score + 1);
+    }
+
+    if (snakeCheckIndex !== -1) {
+      alert("YOU LOSE");
     }
   };
 
@@ -97,49 +117,51 @@ function App() {
   };
 
   const moveShape = (direction) => {
-    let newPosition = position;
+    let tempSnake = [...snakePositions];
+    let lastPosition = tempSnake.shift();
+    let newPosition = snakePositions[snakePositions.length - 1];
 
     switch (direction) {
       case "ArrowDown":
-        //clearField();
-        clearPosition(position.x, position.y);
         newPosition = {
-          ...position,
-          y: position.y + ctx.canvas.height * BOARD_MULTIPLIER,
+          ...snakePositions[snakePositions.length - 1],
+          y:
+            snakePositions[snakePositions.length - 1].y +
+            ctx.canvas.height * BOARD_MULTIPLIER,
         };
-        setPosition(checkBoundary(newPosition));
         break;
       case "ArrowUp":
-        //clearField();
-        clearPosition(position.x, position.y);
         newPosition = {
-          ...position,
-          y: position.y - ctx.canvas.height * BOARD_MULTIPLIER,
+          ...snakePositions[snakePositions.length - 1],
+          y:
+            snakePositions[snakePositions.length - 1].y -
+            ctx.canvas.height * BOARD_MULTIPLIER,
         };
-        setPosition(checkBoundary(newPosition));
+
         break;
       case "ArrowLeft":
-        //clearField();
-        clearPosition(position.x, position.y);
         newPosition = {
-          ...position,
-          x: position.x - ctx.canvas.width * BOARD_MULTIPLIER,
+          ...snakePositions[snakePositions.length - 1],
+          x:
+            snakePositions[snakePositions.length - 1].x -
+            ctx.canvas.width * BOARD_MULTIPLIER,
         };
-        setPosition(checkBoundary(newPosition));
         break;
       case "ArrowRight":
-        //clearField();
-        clearPosition(position.x, position.y);
         newPosition = {
-          ...position,
-          x: position.x + ctx.canvas.width * BOARD_MULTIPLIER,
+          ...snakePositions[snakePositions.length - 1],
+          x:
+            snakePositions[snakePositions.length - 1].x +
+            ctx.canvas.width * BOARD_MULTIPLIER,
         };
-        setPosition(checkBoundary(newPosition));
         break;
       default:
     }
-
+    newPosition = checkBoundary(newPosition);
+    tempSnake.push(newPosition);
+    clearPosition(lastPosition.x, lastPosition.y);
     checkCollision(checkBoundary(newPosition));
+    setSnakePositions(tempSnake);
   };
 
   const setContext = (canvas) => {
