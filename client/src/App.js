@@ -98,16 +98,19 @@ function App() {
   };
 
   const createFood = () => {
-    let x =
-      Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
-      ctx.canvas.width *
-      BOARD_MULTIPLIER;
-    let y =
-      Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
-      ctx.canvas.height *
-      BOARD_MULTIPLIER;
+    let x, y;
+    do {
+      x =
+        Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
+        ctx.canvas.width *
+        BOARD_MULTIPLIER;
+      y =
+        Math.floor(Math.random() * 100 * BOARD_MULTIPLIER) *
+        ctx.canvas.height *
+        BOARD_MULTIPLIER;
+    } while (snakePositions.some((snake) => snake.x === x || snake.y === y));
 
-    if (foodPositions.length === 0) {
+    if (foodPositions.length < 1) {
       setFoodPositions([{ x, y }]);
     }
 
@@ -116,7 +119,7 @@ function App() {
     });
   };
 
-  const moveShape = (direction) => {
+  const moveSnake = (direction) => {
     let tempSnake = [...snakePositions];
     let lastPosition = tempSnake.shift();
     let newPosition = snakePositions[snakePositions.length - 1];
@@ -170,7 +173,7 @@ function App() {
   };
 
   return (
-    <div className="App" tabIndex={0} onKeyDown={(e) => moveShape(e.code)}>
+    <div className="App" tabIndex={0} onKeyDown={(e) => moveSnake(e.code)}>
       <Canvas setContext={setContext}></Canvas>
       <Score score={score} />
     </div>
