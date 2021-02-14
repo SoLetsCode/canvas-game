@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 //components
 import Canvas from "./components/Canvas";
 import Score from "./components/Score";
-import Board from "./components/Board";
 
 import { BOARD_MULTIPLIER, BOARD_SEPARATION, COLLISION } from "./constants";
 
@@ -16,7 +15,6 @@ const defaultSnake = [
 
 function App() {
   const [ctx, setCtx] = useState(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [foodPositions, setFoodPositions] = useState([]);
   const [snakePositions, setSnakePositions] = useState(defaultSnake);
   let [score, setScore] = useState(0);
